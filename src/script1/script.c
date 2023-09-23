@@ -11,7 +11,9 @@
 
 int main(void)
 {
-  // TODO: Read in filenames and urls from urls.txt
+  /* 
+    Read in filenames and urls from urls.txt
+  */
 
   char fnames[MAX_URLS][MAX_URL_LENGTH];
   char urls[MAX_URLS][MAX_URL_LENGTH];
@@ -32,7 +34,7 @@ int main(void)
     return 1;
   }
 
-  // Read and print all lines
+  //Read and print all lines
   int i = 0;
   while (fgets(line, sizeof(line), file) != NULL) {
       // Store each name and url in array
@@ -56,7 +58,9 @@ int main(void)
   // Close the file
   fclose(file);
 
-  // TODO: Download each file and rename
+  /*
+    Download each file and rename
+  */
   for (size_t i = 0; i < MAX_URLS; i++)
   {
     /* code */
@@ -75,12 +79,11 @@ int main(void)
           printf("Download successful.\n");
       } else {
           printf("Download failed.\n");
+          // TODO: Ignore failed downloads for now
+          //return 1;
       }
     }
   }
-  
-
-
 
   // TODO: Perform actions on each file
   
