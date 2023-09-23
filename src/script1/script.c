@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <dirent.h>
 
 #define MAX_URLS 20
 #define MAX_LINE_LENGTH 512
@@ -86,6 +87,48 @@ int main(void)
   }
 
   // TODO: Perform actions on each file
+
+  // Open the directory for reading
+  DIR *dir = opendir("./downloads");
+
+  if (dir == NULL) {
+      perror("Unable to open directory");
+      return 1;
+  }
+
+  struct dirent *entry;
+
+  // Read each entry in the directory
+  while ((entry = readdir(dir)) != NULL) {
+      // Skip "." and ".." entries
+      if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+          continue;
+      }
+
+      // Print the filename
+      printf("Filename: %s\n", entry->d_name);
+
+      // Run action on the file
+      // Construct the command
+      char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
+      snprintf(command, sizeof(command), "./manipulate %s", entry->d_name);
+
+      printf("%s\n\n", command);
+
+      // Run the command
+      int result = system(command);
+
+      if (result == 0) {
+          printf("Command successful.\n");
+      } else {
+          printf("Command failed.\n");
+          // TODO: Ignore failed commands for now
+          //return 1;
+      }
+  }
+
+  // Close the directory
+  closedir(dir);
   
   return 0;
 }
