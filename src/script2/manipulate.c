@@ -52,8 +52,6 @@ void modifyDNSRecord(char *input, int newValue) {
 }
 
 int main(int argc, char *argv[]) {
-  // TODO: return nothing for testing
-  return 0;
 
     if (argc != 2) {
       printf("Incorrect number of arguments passed: %d\n", argc);
@@ -83,34 +81,17 @@ int main(int argc, char *argv[]) {
     }
 
     // Line number to be deleted
-    int lineToDelete[3] = {5, 8, 9};
     int currentLine = 1;
 
-    // Line to be edited
-    int editLine = 2;
 
     char buffer[1024]; // Adjust buffer size as needed
 
     // Read and copy lines from the original file to the temporary file
     while (fgets(buffer, sizeof(buffer), originalFile) != NULL) {
-        int delete = 0;
-        for (int i = 0; i < 3; i++)
-        {
-          if (currentLine == lineToDelete[i]) {
-            delete = 1;
-          }
-        }
         
-        if (!delete) {
-            if (currentLine == editLine) {
-              // Edit the 2nd line and write it to file
-              //printf("Modifying DNS Record: %s", buffer);
-              modifyDNSRecord(buffer, 3);
-              printf("Modified DNS Record: %s", buffer);
-              fputs(buffer, tempFile);
-            } else {
-              fputs(buffer, tempFile);
-            }
+        // Delete all lines that start with #
+        if (buffer[0] != '#') {
+          fputs(buffer, tempFile);
         }
         currentLine++;
     }
@@ -130,8 +111,6 @@ int main(int argc, char *argv[]) {
         perror("Error renaming the temporary file");
         return 1;
     }
-
-    printf("Lines deleted successfully.\n");
 
     return 0;
 }
