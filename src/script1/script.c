@@ -6,6 +6,8 @@
 #include <dirent.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include <stdarg.h>
+#include <time.h>
 
 #define MAX_URLS 100
 #define MAX_LINE_LENGTH 512
@@ -15,6 +17,44 @@
 #define COMMENT_CHAR '#'
 
 #define BUFFER_SIZE 1024
+
+// TODO: update log style to SUCCESS/FAIL/ERROR/INFO
+void lg(const char *format, ...) {
+    // Get the current time and date
+    time_t rawtime;
+    struct tm *timeinfo;
+    char timeStr[32]; // Adjust the size based on your formatting needs
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(timeStr, sizeof(timeStr), "[%Y-%m-%d %H:%M:%S] ", timeinfo);
+
+    // Print to the terminal
+    printf("%s", timeStr);
+
+    // Print to the log file
+    FILE *logfile = fopen("./log.txt", "a");
+    if (logfile == NULL) {
+        perror("Failed to open log file");
+        return;
+    }
+    fprintf(logfile, "%s", timeStr);
+
+    // Print the formatted message to both the terminal and the log file
+    va_list args;
+    va_start(args, format);
+    vfprintf(stdout, format, args); // Print to terminal
+    vfprintf(logfile, format, args); // Print to log file
+    va_end(args);
+
+    // Append a newline character to the log file
+    fprintf(logfile, "\n");
+    // Append a newline character to stdout
+    fprintf(stdout, "\n");
+
+    // Close the log file
+    fclose(logfile);
+}
 
 void copyFile(const char *srcPath, const char *destPath) {
     int srcFile, destFile;
@@ -48,12 +88,11 @@ void copyFile(const char *srcPath, const char *destPath) {
         perror("Read error");
         return;
     }
-
-    printf("Copied: %s -> %s\n", srcPath, destPath);
 }
 
 int main(void)
 {
+  lg("Script is starting");
   /* 
     Read in filenames and urls from urls.txt
   */
@@ -98,7 +137,7 @@ int main(void)
           strcpy(urls[i], url);
           i++;
         } else {
-          printf("Invalid input format.\n");
+          lg("Invalid urls.txt format.");
           return 1;
         }
       }
@@ -106,6 +145,8 @@ int main(void)
   
   // Close the file
   fclose(file);
+
+  lg("Read from urls.txt");
 
   /*
     Download each file and rename
@@ -118,21 +159,21 @@ int main(void)
   {
     /* code */
     if (urls[i][0] != COMMENT_CHAR) {
-      printf("%s\n", urls[i]);
+      lg("Downloading %s", urls[i]);
       // Construct the wget command
       char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
-      snprintf(command, sizeof(command), "wget -O ./downloads/%s %s", fnames[i], urls[i]);
+      snprintf(command, sizeof(command), "wget -O ./downloads/%s %s &> /dev/null", fnames[i], urls[i]); // TODO: show errors if there are any
 
-      printf("%s\n\n", command);
+      lg("COMMAND: %s", command);
 
       // Run the wget command
       int result = system(command);
 
       if (result == 0) {
-          printf("Download successful.\n");
+          lg("Download successful: %s", fnames[i]);
           increments[i]++;
       } else {
-          printf("Download failed.\n");
+          lg("Download failed: %s", urls[i]);
           // TODO: Ignore failed downloads for now
           //return 1;
       }
@@ -218,23 +259,19 @@ int main(void)
           continue;
       }
 
-      // Print the filename
-      printf("Filename: %s\n", entry->d_name);
-
       // Run action on the file
+      lg("Manipulating %s", entry->d_name);
       // Construct the command
       char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
       snprintf(command, sizeof(command), "./manipulate ./downloads/%s", entry->d_name);
-
-      printf("%s\n\n", command);
 
       // Run the command
       int result = system(command);
 
       if (result == 0) {
-          printf("Command successful.\n");
+          lg("%s manipulated successfully", entry->d_name);
       } else {
-          printf("Command failed.\n");
+          lg("ERROR: manipulating %s", entry->d_name);
           // TODO: Ignore failed commands for now
           //return 1;
       }
@@ -243,12 +280,16 @@ int main(void)
   // Close the directory
   closedir(dir);
 
-    /*
+  lg("All manipulations finished");
+
+  /*
     Move files from ./downloads to user defined directory
   */
   
   const char *srcDir = "./downloads";
   const char *destDir = "/etc/bind/master";
+
+  lg("Copying files to %s", destDir);
 
   // Open the source directory
   dir = opendir(srcDir);
@@ -274,6 +315,8 @@ int main(void)
   }
 
   closedir(dir);
+
+  lg("Script has finished");
   
   return 0;
 }
