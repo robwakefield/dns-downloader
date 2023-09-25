@@ -2,6 +2,57 @@
 #include <string.h>
 #include <stdlib.h>
 
+void modifyDNSRecord(char *input, int newValue) {
+    // Tokenize string on ' 's
+    char *first_word = strtok(input, " ");
+    char *second_word = strtok(NULL, " ");
+    char *third_word = strtok(NULL, " ");
+
+    strtok(NULL, " ");
+    char *fourth_word = "Securedomains.rpz";
+
+    strtok(NULL, " ");
+    char *fifth_word = "0";
+    strtok(NULL, " ");
+    char *sixth_word = "3600";
+    strtok(NULL, " ");
+    char *seventh_word = "3600";
+
+    char *eighth_word = strtok(NULL, " ");
+    char *nineth_word = strtok(NULL, " ");
+
+    if (nineth_word == NULL) {
+      printf("Cannot modify line: Words not expected\n");
+      return;
+    }
+
+    // Create modified record
+    char output[1024];
+    char word[64];
+
+    strcpy(output, first_word);
+    strcat(output, " ");
+    strcpy(word, second_word);
+    strcat(output, word);
+    strcat(output, " ");
+    strcat(output, third_word);
+    strcat(output, " ");
+    strcat(output, fourth_word);
+    strcat(output, " ");
+    strcat(output, fifth_word);
+    strcat(output, " ");
+    strcat(output, sixth_word);
+    strcat(output, " ");
+    strcat(output, seventh_word);
+    strcat(output, " ");
+    strcat(output, eighth_word);
+    strcat(output, " ");
+    strcat(output, nineth_word);
+    strcat(output, "\n");
+
+    strcpy(input, output);
+}
+
 int main(int argc, char *argv[]) {
 
     if (argc != 2) {
@@ -14,10 +65,6 @@ int main(int argc, char *argv[]) {
 
     /* 
       Open file and do manipulations
-    */
-
-    /* 
-      DELETE higlighted lines
     */
 
     // Open the original file for reading
@@ -39,6 +86,9 @@ int main(int argc, char *argv[]) {
     int lineToDelete[3] = {5, 8, 9};
     int currentLine = 1;
 
+    // Line to be edited
+    int editLine = 2;
+
     char buffer[1024]; // Adjust buffer size as needed
 
     // Read and copy lines from the original file to the temporary file
@@ -52,7 +102,15 @@ int main(int argc, char *argv[]) {
         }
         
         if (!delete) {
-            fputs(buffer, tempFile);
+            if (currentLine == editLine) {
+              // Edit the 2nd line and write it to file
+              //printf("Modifying DNS Record: %s", buffer);
+              modifyDNSRecord(buffer, 0);
+              printf("Modified DNS Record: %s", buffer);
+              fputs(buffer, tempFile);
+            } else {
+              fputs(buffer, tempFile);
+            }
         }
         currentLine++;
     }
@@ -74,10 +132,6 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Lines deleted successfully.\n");
-
-    /*
-      CONTINUE with manipulations
-    */
 
     return 0;
 }
