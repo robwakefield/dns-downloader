@@ -199,8 +199,6 @@ int main(void)
         return 1;
     }
 
-  return 0;
-
   // TODO: Perform actions on each file
 
   // Open the directory for reading

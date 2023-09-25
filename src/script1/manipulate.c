@@ -2,6 +2,13 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define MAX_URLS 100
+#define MAX_LINE_LENGTH 512
+#define MAX_FNAME_LENGTH 256
+#define MAX_URL_LENGTH 256
+
+#define COMMENT_CHAR '#'
+
 void modifyDNSRecord(char *input, int newValue) {
     // Tokenize string on ' 's
     char *first_word = strtok(input, " ");
@@ -59,7 +66,52 @@ int main(int argc, char *argv[]) {
     }
 
     char *fname = argv[1];
+    int increment = 0;
     printf("Manipulating %s\n", fname);
+
+    /* 
+      Check in urls.txt for increment value
+    */
+
+    FILE *file;
+    char line[MAX_URL_LENGTH];
+
+    file = fopen("urls.txt", "r");
+
+    if (file == NULL) {
+      perror("Unable to open urls.txt");
+      return 1;
+    }
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        if (line[0] != COMMENT_CHAR) {
+          char dir_name[MAX_LINE_LENGTH];
+          strcpy(dir_name, "./downloads/");
+          char name[MAX_FNAME_LENGTH]; // Store the filename
+          char url[MAX_URL_LENGTH]; // Store the URL
+          int inc;
+
+          // Use sscanf to split strings and get increment (if present)
+          if (sscanf(line, "%s %s %d", name, url, &inc) == 3) {
+            strcat(dir_name, name);
+            if (!strcmp(fname, dir_name)) {
+              increment = inc;
+              break;
+            }
+          } else if (sscanf(line, "%s %s", name, url) == 2) {
+            strcat(dir_name, name);
+            if (!strcmp(fname, dir_name)) {
+              increment = 0;
+              break;
+            }
+          } else {
+            continue;
+          }
+        }
+    }
+    
+    // Close the file
+    fclose(file);
 
     /* 
       Open file and do manipulations
@@ -103,7 +155,7 @@ int main(int argc, char *argv[]) {
             if (currentLine == editLine) {
               // Edit the 2nd line and write it to file
               //printf("Modifying DNS Record: %s", buffer);
-              modifyDNSRecord(buffer, 3);
+              modifyDNSRecord(buffer, increment);
               printf("Modified DNS Record: %s", buffer);
               fputs(buffer, tempFile);
             } else {
