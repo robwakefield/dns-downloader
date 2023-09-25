@@ -104,6 +104,10 @@ int main(void)
   /*
     Download each file and rename
   */
+
+  // Create the destination directory if it doesn't exist
+  mkdir("./downloads", 0755); 
+
   for (size_t i = 0; i < MAX_URLS; i++)
   {
     /* code */
