@@ -1,4 +1,4 @@
-# Save URLs in format => Filename URL
+# Save URLs in format => Filename URL Increment(Optional)
 securedomains.abuse https://blocklistproject.github.io/Lists/alt-version/abuse-nl.txt
 securedomains.ads https://blocklistproject.github.io/Lists/alt-version/ads-nl.txt
 securedomains.crypto https://blocklistproject.github.io/Lists/alt-version/crypto-nl.txt
