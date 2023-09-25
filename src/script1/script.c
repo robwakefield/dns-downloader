@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 
-#define MAX_URLS 20
+#define MAX_URLS 100
 #define MAX_LINE_LENGTH 512
 #define MAX_FNAME_LENGTH 256
 #define MAX_URL_LENGTH 256
