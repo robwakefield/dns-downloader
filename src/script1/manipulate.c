@@ -10,9 +10,10 @@ void modifyDNSRecord(char *input, int newValue) {
 
     strtok(NULL, " ");
     char *fourth_word = "Securedomains.rpz";
-
     strtok(NULL, " ");
-    char *fifth_word = "0";
+    char fifth_word[20]; // Assuming a maximum of 20 characters for the string
+    // Using sprintf to convert int to string
+    sprintf(fifth_word, "%d", newValue);
     strtok(NULL, " ");
     char *sixth_word = "3600";
     strtok(NULL, " ");
@@ -28,12 +29,10 @@ void modifyDNSRecord(char *input, int newValue) {
 
     // Create modified record
     char output[1024];
-    char word[64];
 
     strcpy(output, first_word);
     strcat(output, " ");
-    strcpy(word, second_word);
-    strcat(output, word);
+    strcat(output, second_word);
     strcat(output, " ");
     strcat(output, third_word);
     strcat(output, " ");
@@ -104,7 +103,7 @@ int main(int argc, char *argv[]) {
             if (currentLine == editLine) {
               // Edit the 2nd line and write it to file
               //printf("Modifying DNS Record: %s", buffer);
-              modifyDNSRecord(buffer, 0);
+              modifyDNSRecord(buffer, 3);
               printf("Modified DNS Record: %s", buffer);
               fputs(buffer, tempFile);
             } else {
