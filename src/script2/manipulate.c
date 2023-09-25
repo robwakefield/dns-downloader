@@ -91,6 +91,9 @@ int main(int argc, char *argv[]) {
         
         // Delete all lines that start with #
         if (buffer[0] != '#') {
+          // Add " CNAME ." to end of line
+          buffer[strcspn(buffer, "\n")] = 0; // Remove newline
+          strcat(buffer, " CNAME .\n");
           fputs(buffer, tempFile);
         }
         currentLine++;
