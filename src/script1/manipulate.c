@@ -48,7 +48,6 @@ void modifyDNSRecord(char *input, int newValue) {
     strcat(output, eighth_word);
     strcat(output, " ");
     strcat(output, nineth_word);
-    strcat(output, "\n");
 
     strcpy(input, output);
 }
