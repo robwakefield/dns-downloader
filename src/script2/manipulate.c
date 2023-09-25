@@ -86,6 +86,11 @@ int main(int argc, char *argv[]) {
 
     char buffer[1024]; // Adjust buffer size as needed
 
+    // Add header information
+    strcpy(buffer, "$TTL 300\n@ SOA localhost. Securedomains.rpz. 0 3600 3600 259200 300\n  NS  localhost.");
+
+    fputs(buffer, tempFile);
+
     // Read and copy lines from the original file to the temporary file
     while (fgets(buffer, sizeof(buffer), originalFile) != NULL) {
         
