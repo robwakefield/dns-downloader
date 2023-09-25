@@ -60,6 +60,8 @@ int main(void)
 
   char fnames[MAX_URLS][MAX_URL_LENGTH];
   char urls[MAX_URLS][MAX_URL_LENGTH];
+  int increments[MAX_URLS];
+
   
   for (size_t i = 0; i < MAX_URLS; i++)
   {
@@ -77,7 +79,6 @@ int main(void)
     return 1;
   }
 
-  //Read and print all lines
   int i = 0;
   while (fgets(line, sizeof(line), file) != NULL) {
       // Store each name and url in array
@@ -86,14 +87,19 @@ int main(void)
         char fname[MAX_FNAME_LENGTH]; // Store the filename
         char url[MAX_URL_LENGTH]; // Store the URL
 
-        // Use sscanf to split the input into two strings
-        if (sscanf(line, "%s %s", fname, url) == 2) {
-            strcpy(fnames[i], fname);
-            strcpy(urls[i], url);
-            i++;
+        // Use sscanf to split strings and set increment (if present)
+        if (sscanf(line, "%s %s %d", fname, url, &increments[i]) == 3) {
+          strcpy(fnames[i], fname);
+          strcpy(urls[i], url);
+          i++;
+        } else if (sscanf(line, "%s %s", fname, url) == 2) {
+          increments[i] = -1;
+          strcpy(fnames[i], fname);
+          strcpy(urls[i], url);
+          i++;
         } else {
-            printf("Invalid input format.\n");
-            return 1;
+          printf("Invalid input format.\n");
+          return 1;
         }
       }
   }
@@ -124,6 +130,7 @@ int main(void)
 
       if (result == 0) {
           printf("Download successful.\n");
+          increments[i]++;
       } else {
           printf("Download failed.\n");
           // TODO: Ignore failed downloads for now
@@ -131,6 +138,68 @@ int main(void)
       }
     }
   }
+
+  /*
+    Update urls.txt with increments
+  */
+
+   // Open the original file for reading
+    FILE *originalFile = fopen("urls.txt", "r");
+    if (originalFile == NULL) {
+        perror("Error opening the original file");
+        return 1;
+    }
+
+    // Open a temporary file for writing
+    FILE *tempFile = fopen("urls.temp", "w");
+    if (tempFile == NULL) {
+        perror("Error creating the temporary file");
+        fclose(originalFile);
+        return 1;
+    }
+
+    int currentLine = 1;
+    char buffer[1024]; // Adjust buffer size as needed
+
+    // Read and copy lines from the original file to the temporary file
+    while (fgets(buffer, sizeof(buffer), originalFile) != NULL) {
+        if (buffer[0] != '#') {
+          // Remove previous incremen
+          char *firstSpace = strchr(buffer, ' '); // Find the first space in the string
+          char *lastSpace = strrchr(buffer, ' '); // Find the last space in the string
+          // If first and last space are the same (the only space) we don't want to remove
+          if (firstSpace != lastSpace && lastSpace != NULL) {
+              // Null-terminate the string at the last space to remove the last word
+              *lastSpace = '\0';
+          }
+
+          char inc_str[20]; // Assuming a maximum of 20 characters for the string
+          // Using sprintf to convert int to string
+          sprintf(inc_str, " %d\n", increments[currentLine - 1]);
+          buffer[strcspn(buffer, "\n")] = 0; // Remove newline
+          strcat(buffer, inc_str);
+          currentLine++;
+        }
+        fputs(buffer, tempFile);
+    }
+
+    // Close both files
+    fclose(originalFile);
+    fclose(tempFile);
+
+    // Delete the original file
+    if (remove("urls.txt") != 0) {
+        perror("Error deleting the original file");
+        return 1;
+    }
+
+    // Rename the temporary file to the original file
+    if (rename("urls.temp", "urls.txt") != 0) {
+        perror("Error renaming the temporary file");
+        return 1;
+    }
+
+  return 0;
 
   // TODO: Perform actions on each file
 
