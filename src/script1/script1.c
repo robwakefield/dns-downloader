@@ -136,8 +136,7 @@ int main(void)
           increments[i]++;
       } else {
           lg("Download failed: %s", urls[i]);
-          // TODO: Ignore failed downloads for now
-          //return 1;
+          // Ignore failed downloads
       }
     }
   }
@@ -277,6 +276,26 @@ int main(void)
   }
 
   closedir(dir);
+
+  /*
+    Run 'sudo rndc reload'
+  */
+
+      // Construct the command
+      char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
+      snprintf(command, sizeof(command), "sudo rndc reload");
+
+      lg("COMMAND: %s", command);
+
+      // Run the command
+      int result = system(command);
+
+      if (result == 0) {
+          lg("Command ran successfully");
+      } else {
+          lg("ERROR: running command");
+      }
+
 
   lg("Script 1 has finished");
   
