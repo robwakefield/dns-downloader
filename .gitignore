@@ -3,6 +3,8 @@
 *.dSYM
 
 src/script*/downloads/*
-src/script*/script
-src/script*/manipulate
+src/script1/script1
+src/script2/script2
+src/script1/manipulate1
+src/script2/manipulate2
 *log*.txt
