@@ -18,7 +18,7 @@ void lg(const char *format, ...) {
     printf("%s", timeStr);
 
     // Print to the log file
-    FILE *logfile = fopen("./log.txt", "a");
+    FILE *logfile = fopen("../script2-logs.txt", "a");
     if (logfile == NULL) {
         perror("Failed to open log file");
         return;
