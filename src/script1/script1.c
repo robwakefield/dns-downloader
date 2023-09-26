@@ -8,6 +8,8 @@
 #include <sys/stat.h>
 #include "lg.c"
 
+#define DEST_DIR "/etc/bind/master"
+
 #define MAX_URLS 100
 #define MAX_LINE_LENGTH 512
 #define MAX_FNAME_LENGTH 256
@@ -248,7 +250,7 @@ int main(void)
   */
   
   const char *srcDir = "./downloads";
-  const char *destDir = "/etc/bind/master";
+  const char *destDir = DEST_DIR;
 
   lg("Copying files to %s", destDir);
 
