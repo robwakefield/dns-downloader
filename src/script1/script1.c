@@ -225,7 +225,7 @@ int main(void)
       lg("Manipulating %s", entry->d_name);
       // Construct the command
       char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
-      snprintf(command, sizeof(command), "./manipulate ./downloads/%s", entry->d_name);
+      snprintf(command, sizeof(command), "./manipulate1 ./downloads/%s", entry->d_name);
 
       // Run the command
       int result = system(command);
