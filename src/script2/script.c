@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include "lg.c"
 
 #define MAX_URLS 100
 #define MAX_LINE_LENGTH 512
@@ -49,11 +50,12 @@ void copyFile(const char *srcPath, const char *destPath) {
         return;
     }
 
-    printf("Copied: %s -> %s\n", srcPath, destPath);
 }
 
 int main(void)
 {
+  
+  lg("Script 2 is starting");
   /* 
     Read in filenames and urls from urls.txt
   */
@@ -92,7 +94,7 @@ int main(void)
             strcpy(urls[i], url);
             i++;
         } else {
-            printf("Invalid input format.\n");
+            lg("ERROR: Invalid input format.");
             return 1;
         }
       }
@@ -112,20 +114,20 @@ int main(void)
   {
     /* code */
     if (urls[i][0] != COMMENT_CHAR) {
-      printf("%s\n", urls[i]);
+      lg("Downloading %s", urls[i]);
       // Construct the wget command
       char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
-      snprintf(command, sizeof(command), "wget -O ./downloads/%s %s", fnames[i], urls[i]);
+      snprintf(command, sizeof(command), "wget -O ./downloads/%s %s &> /dev/null", fnames[i], urls[i]);
 
-      printf("%s\n\n", command);
+      lg("COMMAND: %s", command);
 
       // Run the wget command
       int result = system(command);
 
       if (result == 0) {
-          printf("Download successful.\n");
+          lg("Download successful: %s", fnames[i]);
       } else {
-          printf("Download failed.\n");
+          lg("Download failed: %s", urls[i]);
           // TODO: Ignore failed downloads for now
           //return 1;
       }
@@ -151,23 +153,19 @@ int main(void)
           continue;
       }
 
-      // Print the filename
-      printf("Filename: %s\n", entry->d_name);
-
       // Run action on the file
+      lg("Manipulating %s", entry->d_name);
       // Construct the command
       char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
       snprintf(command, sizeof(command), "./manipulate ./downloads/%s", entry->d_name);
-
-      printf("%s\n\n", command);
 
       // Run the command
       int result = system(command);
 
       if (result == 0) {
-          printf("Command successful.\n");
+          lg("%s manipulated successfully", entry->d_name);
       } else {
-          printf("Command failed.\n");
+          lg("ERROR: manipulating %s", entry->d_name);
           // TODO: Ignore failed commands for now
           //return 1;
       }
@@ -207,6 +205,8 @@ int main(void)
   }
 
   closedir(dir);
+
+  lg("Script 2 has finished");
 
   return 0;
 }

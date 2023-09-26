@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "lg.c"
 
 void modifyDNSRecord(char *input, int newValue) {
     // Tokenize string on ' 's
@@ -23,7 +24,7 @@ void modifyDNSRecord(char *input, int newValue) {
     char *nineth_word = strtok(NULL, " ");
 
     if (nineth_word == NULL) {
-      printf("Cannot modify line: Words not expected\n");
+      lg("ERROR: Cannot modify line: Words not expected");
       return;
     }
 
@@ -54,12 +55,11 @@ void modifyDNSRecord(char *input, int newValue) {
 int main(int argc, char *argv[]) {
 
     if (argc != 2) {
-      printf("Incorrect number of arguments passed: %d\n", argc);
+      lg("ERROR: Incorrect number of arguments passed: %d", argc);
       return 1;
     }
 
     char *fname = argv[1];
-    printf("Manipulating %s\n", fname);
 
     /* 
       Open file and do manipulations
@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
     // Open a temporary file for writing
     FILE *tempFile = fopen("downloads/temp.txt", "w");
     if (tempFile == NULL) {
+        // TODO: look into perror
         perror("Error creating the temporary file");
         fclose(originalFile);
         return 1;

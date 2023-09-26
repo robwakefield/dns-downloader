@@ -53,7 +53,8 @@ void copyFile(const char *srcPath, const char *destPath) {
 
 int main(void)
 {
-  lg("Script is starting");
+  
+  lg("Script 1 is starting");
   /* 
     Read in filenames and urls from urls.txt
   */
@@ -277,7 +278,7 @@ int main(void)
 
   closedir(dir);
 
-  lg("Script has finished");
+  lg("Script 1 has finished");
   
   return 0;
 }
