@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <time.h>
 
 #define MAX_URLS 100
 #define MAX_LINE_LENGTH 512
@@ -8,6 +10,43 @@
 #define MAX_URL_LENGTH 256
 
 #define COMMENT_CHAR '#'
+
+void lg(const char *format, ...) {
+    // Get the current time and date
+    time_t rawtime;
+    struct tm *timeinfo;
+    char timeStr[32]; // Adjust the size based on your formatting needs
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(timeStr, sizeof(timeStr), "[%Y-%m-%d %H:%M:%S] ", timeinfo);
+
+    // Print to the terminal
+    printf("%s", timeStr);
+
+    // Print to the log file
+    FILE *logfile = fopen("./log.txt", "a");
+    if (logfile == NULL) {
+        perror("Failed to open log file");
+        return;
+    }
+    fprintf(logfile, "%s", timeStr);
+
+    // Print the formatted message to both the terminal and the log file
+    va_list args;
+    va_start(args, format);
+    vfprintf(stdout, format, args); // Print to terminal
+    vfprintf(logfile, format, args); // Print to log file
+    va_end(args);
+
+    // Append a newline character to the log file
+    fprintf(logfile, "\n");
+    // Append a newline character to stdout
+    fprintf(stdout, "\n");
+
+    // Close the log file
+    fclose(logfile);
+}
 
 void modifyDNSRecord(char *input, int newValue) {
     // Tokenize string on ' 's
@@ -30,7 +69,7 @@ void modifyDNSRecord(char *input, int newValue) {
     char *nineth_word = strtok(NULL, " ");
 
     if (nineth_word == NULL) {
-      printf("Cannot modify line: Words not expected\n");
+      lg("ERROR: Cannot modify line");
       return;
     }
 
@@ -61,14 +100,13 @@ void modifyDNSRecord(char *input, int newValue) {
 int main(int argc, char *argv[]) {
 
     if (argc != 2) {
-      printf("Incorrect number of arguments passed: %d\n", argc);
+      lg("ERROR: Incorrect number of arguments passed: %d", argc);
       return 1;
     }
 
     char *fname = argv[1];
     int increment = 0;
-    printf("Manipulating %s\n", fname);
-
+    
     /* 
       Check in urls.txt for increment value
     */
@@ -156,7 +194,7 @@ int main(int argc, char *argv[]) {
               // Edit the 2nd line and write it to file
               //printf("Modifying DNS Record: %s", buffer);
               modifyDNSRecord(buffer, increment);
-              printf("Modified DNS Record: %s", buffer);
+              //lg("Modified DNS Record: %s", buffer);
               fputs(buffer, tempFile);
             } else {
               fputs(buffer, tempFile);
@@ -181,7 +219,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    printf("Lines deleted successfully.\n");
+    lg("File manipulated successfully");
 
     return 0;
 }
