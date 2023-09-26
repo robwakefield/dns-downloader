@@ -7,8 +7,8 @@ CC = gcc
 CFLAGS = -fdiagnostics-color=always -g
 
 # Source files and output executables
-SOURCES =  script1/script.c script1/manipulate.c script2/script.c script2/manipulate.c
-OUTPUTS = script1/script script1/manipulate script2/script script2/manipulate
+SOURCES =  script1/script1.c script1/manipulate1.c script2/script2.c script2/manipulate2.c
+OUTPUTS = script1/script1 script1/manipulate1 script2/script2 script2/manipulate2
 
 # Default target
 all: $(OUTPUTS)
