@@ -81,6 +81,7 @@ int main(int argc, char *argv[]) {
     file = fopen("urls.txt", "r");
 
     if (file == NULL) {
+      lg("Unable to open urls.txt");
       perror("Unable to open urls.txt");
       return 1;
     }
@@ -122,6 +123,7 @@ int main(int argc, char *argv[]) {
     // Open the original file for reading
     FILE *originalFile = fopen(fname, "r");
     if (originalFile == NULL) {
+        lg("Error opening the original file");
         perror("Error opening the original file");
         return 1;
     }
@@ -129,6 +131,7 @@ int main(int argc, char *argv[]) {
     // Open a temporary file for writing
     FILE *tempFile = fopen("downloads/temp.txt", "w");
     if (tempFile == NULL) {
+        lg("Error creating the temporary file");
         perror("Error creating the temporary file");
         fclose(originalFile);
         return 1;
@@ -173,12 +176,14 @@ int main(int argc, char *argv[]) {
 
     // Delete the original file
     if (remove(fname) != 0) {
+        lg("Error deleting the original file");
         perror("Error deleting the original file");
         return 1;
     }
 
     // Rename the temporary file to the original file
     if (rename("downloads/temp.txt", fname) != 0) {
+        lg("Error renaming the temporary file");
         perror("Error renaming the temporary file");
         return 1;
     }
