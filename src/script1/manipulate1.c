@@ -137,8 +137,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Line number to be deleted
-    int lineToDelete[3] = {5, 8, 9};
     int currentLine = 1;
 
     // Line to be edited
@@ -148,15 +146,7 @@ int main(int argc, char *argv[]) {
 
     // Read and copy lines from the original file to the temporary file
     while (fgets(buffer, sizeof(buffer), originalFile) != NULL) {
-        int delete = 0;
-        for (int i = 0; i < 3; i++)
-        {
-          if (currentLine == lineToDelete[i]) {
-            delete = 1;
-          }
-        }
-        
-        if (!delete) {
+        if (buffer[0] != ';') {
             if (currentLine == editLine) {
               // Edit the 2nd line and write it to file
               //printf("Modifying DNS Record: %s", buffer);
