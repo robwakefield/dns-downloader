@@ -138,8 +138,12 @@ int manipulate(char *fname) {
 
     // Read and copy lines from the original file to the temporary file
     while (fgets(buffer, sizeof(buffer), originalFile) != NULL) {
-        if (buffer[0] != ';') {
-            if (currentLine == editLine) {
+
+        // delete lines 4-9
+        if ((currentLine < 4 || currentLine > 9)) {
+            if (currentLine ==  14) {
+              fputs("\n", tempFile);
+            } else if (currentLine == editLine) {
               // Edit the 2nd line and write it to file
               //printf("Modifying DNS Record: %s", buffer);
               modifyDNSRecord(buffer, increment);
