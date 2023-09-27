@@ -3,54 +3,12 @@
 #include <stdlib.h>
 #include "lg.c"
 
-void modifyDNSRecord(char *input, int newValue) {
-    // Tokenize string on ' 's
-    char *first_word = strtok(input, " ");
-    char *second_word = strtok(NULL, " ");
-    char *third_word = strtok(NULL, " ");
+#define MAX_URLS 100
+#define MAX_LINE_LENGTH 512
+#define MAX_FNAME_LENGTH 256
+#define MAX_URL_LENGTH 256
 
-    strtok(NULL, " ");
-    char *fourth_word = "Securedomains.rpz";
-    strtok(NULL, " ");
-    char fifth_word[20]; // Assuming a maximum of 20 characters for the string
-    // Using sprintf to convert int to string
-    sprintf(fifth_word, "%d", newValue);
-    strtok(NULL, " ");
-    char *sixth_word = "3600";
-    strtok(NULL, " ");
-    char *seventh_word = "3600";
-
-    char *eighth_word = strtok(NULL, " ");
-    char *nineth_word = strtok(NULL, " ");
-
-    if (nineth_word == NULL) {
-      lg("ERROR: Cannot modify line: Words not expected");
-      return;
-    }
-
-    // Create modified record
-    char output[1024];
-
-    strcpy(output, first_word);
-    strcat(output, " ");
-    strcat(output, second_word);
-    strcat(output, " ");
-    strcat(output, third_word);
-    strcat(output, " ");
-    strcat(output, fourth_word);
-    strcat(output, " ");
-    strcat(output, fifth_word);
-    strcat(output, " ");
-    strcat(output, sixth_word);
-    strcat(output, " ");
-    strcat(output, seventh_word);
-    strcat(output, " ");
-    strcat(output, eighth_word);
-    strcat(output, " ");
-    strcat(output, nineth_word);
-
-    strcpy(input, output);
-}
+#define COMMENT_CHAR '#'
 
 int main(int argc, char *argv[]) {
 
@@ -60,6 +18,51 @@ int main(int argc, char *argv[]) {
     }
 
     char *fname = argv[1];
+    int increment = 0;
+
+    /* 
+      Check in urls.txt for increment value
+    */
+
+    FILE *file;
+    char line[MAX_URL_LENGTH];
+
+    file = fopen("urls.txt", "r");
+
+    if (file == NULL) {
+      perror("Unable to open urls.txt");
+      return 1;
+    }
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        if (line[0] != COMMENT_CHAR) {
+          char dir_name[MAX_LINE_LENGTH];
+          strcpy(dir_name, "./downloads/");
+          char name[MAX_FNAME_LENGTH]; // Store the filename
+          char url[MAX_URL_LENGTH]; // Store the URL
+          int inc;
+
+          // Use sscanf to split strings and get increment (if present)
+          if (sscanf(line, "%s %s %d", name, url, &inc) == 3) {
+            strcat(dir_name, name);
+            if (!strcmp(fname, dir_name)) {
+              increment = inc;
+              break;
+            }
+          } else if (sscanf(line, "%s %s", name, url) == 2) {
+            strcat(dir_name, name);
+            if (!strcmp(fname, dir_name)) {
+              increment = 0;
+              break;
+            }
+          } else {
+            continue;
+          }
+        }
+    }
+    
+    // Close the file
+    fclose(file);
 
     /* 
       Open file and do manipulations
@@ -75,7 +78,6 @@ int main(int argc, char *argv[]) {
     // Open a temporary file for writing
     FILE *tempFile = fopen("downloads/temp.txt", "w");
     if (tempFile == NULL) {
-        // TODO: look into perror
         perror("Error creating the temporary file");
         fclose(originalFile);
         return 1;
@@ -88,7 +90,12 @@ int main(int argc, char *argv[]) {
     char buffer[1024]; // Adjust buffer size as needed
 
     // Add header information
-    strcpy(buffer, "$TTL 300\n@ SOA localhost. Securedomains.rpz. 0 3600 3600 259200 300\n  NS  localhost.");
+    strcpy(buffer, "$TTL 300\n@ SOA localhost. Securedomains.rpz. ");
+    char inc_char[20]; // Assuming a maximum of 20 characters for the string
+    // Using sprintf to convert int to string
+    sprintf(inc_char, "%d", increment);
+    strcat(buffer, inc_char);
+    strcat(buffer, " 3600 3600 259200 300\n  NS  localhost.\n");
 
     fputs(buffer, tempFile);
 
@@ -96,7 +103,7 @@ int main(int argc, char *argv[]) {
     while (fgets(buffer, sizeof(buffer), originalFile) != NULL) {
         
         // Delete all lines that start with #
-        if (buffer[0] != '#') {
+        if (buffer[0] != '#' && buffer[0] != '\n') {
           // Add " CNAME ." to end of line
           buffer[strcspn(buffer, "\n")] = 0; // Remove newline
           strcat(buffer, " CNAME .\n");
