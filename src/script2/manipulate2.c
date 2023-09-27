@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "lg.c"
 
 #define MAX_URLS 100
 #define MAX_LINE_LENGTH 512
@@ -10,14 +9,8 @@
 
 #define COMMENT_CHAR '#'
 
-int main(int argc, char *argv[]) {
+int manipulate(char *fname) {
 
-    if (argc != 2) {
-      lg("ERROR: Incorrect number of arguments passed: %d", argc);
-      return 1;
-    }
-
-    char *fname = argv[1];
     int increment = 0;
 
     /* 

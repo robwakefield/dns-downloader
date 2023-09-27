@@ -7,6 +7,7 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include "lg.c"
+#include "manipulate2.c"
 
 #define DEST_DIR "/etc/bind/master"
 
@@ -232,12 +233,12 @@ int main(void)
 
       // Run action on the file
       lg("Manipulating %s", entry->d_name);
-      // Construct the command
-      char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
-      snprintf(command, sizeof(command), "./manipulate2 ./downloads/%s", entry->d_name);
 
-      // Run the command
-      int result = system(command);
+      char long_name[MAX_LINE_LENGTH];
+      strcpy(long_name, "./downloads/");
+      strcat(long_name, entry->d_name);
+
+      int result = manipulate(long_name);
 
       if (result == 0) {
           lg("%s manipulated successfully", entry->d_name);
