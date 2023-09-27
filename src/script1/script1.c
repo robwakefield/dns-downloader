@@ -101,7 +101,7 @@ int main(void)
           strcpy(urls[i], url);
           i++;
         } else if (sscanf(line, "%s %s", fname, url) == 2) {
-          increments[i] = -1;
+          increments[i] = 0;
           strcpy(fnames[i], fname);
           strcpy(urls[i], url);
           i++;
