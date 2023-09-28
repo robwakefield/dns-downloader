@@ -337,8 +337,8 @@ int main(void)
       lg("Downloading %s", urls[i]);
       // Construct the wget command
       char command[1024]; // Adjust the buffer size as needed
-      snprintf(command, sizeof(command), "wget -O ./downloads/%s %s &> /dev/null", fnames[i], urls[i]); // TODO: show errors if there are any
-
+      snprintf(command, sizeof(command), "wget -O ./downloads/%s %s", fnames[i], urls[i]); 
+      
       lg("COMMAND: %s", command);
 
       // Run the wget command
@@ -465,7 +465,7 @@ int main(void)
   const char *srcDir = "./downloads";
   const char *destDir = DEST_DIR;
 
-  lg("Copying files to");
+  lg("Copying files");
 
   // Open the source directory
   dir = opendir(srcDir);
