@@ -45,6 +45,8 @@ void lg(const char *format, ...) {
     va_list args;
     va_start(args, format);
     vfprintf(stdout, format, args); // Print to terminal
+    va_end(args);
+    va_start(args, format);
     vfprintf(logfile, format, args); // Print to log file
     va_end(args);
 
@@ -115,7 +117,7 @@ int manipulate(char *fname) {
     */
 
     FILE *file;
-    char line[MAX_URL_LENGTH];
+    char line[MAX_LINE_LENGTH];
 
     file = fopen("urls.txt", "r");
 
