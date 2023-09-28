@@ -249,7 +249,7 @@ int main(void)
     if (urls[i][0] != COMMENT_CHAR) {
       lg("Downloading %s", urls[i]);
       // Construct the wget command
-      char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
+      char command[1024]; // Adjust the buffer size as needed
       snprintf(command, sizeof(command), "wget -O ./downloads/%s %s &> /dev/null", fnames[i], urls[i]);
 
       lg("COMMAND: %s", command);
