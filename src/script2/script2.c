@@ -33,7 +33,7 @@ int manipulate(char *fname) {
     file = fopen("urls.txt", "r");
 
     if (file == NULL) {
-      lg("Unable to open urls.txt");
+      printf("Unable to open urls.txt");
       perror("Unable to open urls.txt");
       return 1;
     }
@@ -75,7 +75,7 @@ int manipulate(char *fname) {
     // Open the original file for reading
     FILE *originalFile = fopen(fname, "r");
     if (originalFile == NULL) {
-        lg("Error opening the original file");
+        printf("Error opening the original file");
         perror("Error opening the original file");
         return 1;
     }
@@ -83,7 +83,7 @@ int manipulate(char *fname) {
     // Open a temporary file for writing
     FILE *tempFile = fopen("downloads/temp.txt", "w");
     if (tempFile == NULL) {
-        lg("Error creating the temporary file");
+        printf("Error creating the temporary file");
         perror("Error creating the temporary file");
         fclose(originalFile);
         return 1;
@@ -124,14 +124,14 @@ int manipulate(char *fname) {
 
     // Delete the original file
     if (remove(fname) != 0) {
-        lg("Error deleting the original file");
+        printf("Error deleting the original file");
         perror("Error deleting the original file");
         return 1;
     }
 
     // Rename the temporary file to the original file
     if (rename("downloads/temp.txt", fname) != 0) {
-        lg("Error renaming the temporary file");
+        printf("Error renaming the temporary file");
         perror("Error renaming the temporary file");
         return 1;
     }
@@ -146,14 +146,14 @@ void copyFile(const char *srcPath, const char *destPath) {
 
     srcFile = open(srcPath, O_RDONLY);
     if (srcFile == -1) {
-        lg("Failed to open source file");
+        printf("Failed to open source file");
         perror("Failed to open source file");
         return;
     }
 
     destFile = open(destPath, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (destFile == -1) {
-        lg("Failed to open destination file");
+        printf("Failed to open destination file");
         perror("Failed to open destination file");
         close(srcFile);
         return;
@@ -161,7 +161,7 @@ void copyFile(const char *srcPath, const char *destPath) {
 
     while ((bytesRead = read(srcFile, buffer, BUFFER_SIZE)) > 0) {
         if (write(destFile, buffer, bytesRead) != bytesRead) {
-            lg("Write error");
+            printf("Write error");
             perror("Write error");
             break;
         }
@@ -171,7 +171,7 @@ void copyFile(const char *srcPath, const char *destPath) {
     close(destFile);
 
     if (bytesRead == -1) {
-        lg("Read error");
+        printf("Read error");
         perror("Read error");
         return;
     }
@@ -181,7 +181,7 @@ void copyFile(const char *srcPath, const char *destPath) {
 int main(void)
 {
   
-  lg("Script 2 is starting");
+  printf("Script 2 is starting");
   /* 
     Read in filenames and urls from urls.txt
   */
@@ -202,7 +202,7 @@ int main(void)
   file = fopen("urls.txt", "r");
 
   if (file == NULL) {
-    lg("Unable to open urls.txt");
+    printf("Unable to open urls.txt");
     perror("Unable to open urls.txt");
     return 1;
   }
@@ -227,7 +227,7 @@ int main(void)
           strcpy(urls[i], url);
           i++;
         } else {
-            lg("ERROR: Invalid input format.");
+            printf("ERROR: Invalid input format.");
             return 1;
         }
       }
@@ -247,21 +247,21 @@ int main(void)
   {
     /* code */
     if (urls[i][0] != COMMENT_CHAR) {
-      lg("Downloading %s", urls[i]);
+      printf("Downloading %s", urls[i]);
       // Construct the wget command
       char command[1024]; // Adjust the buffer size as needed
       snprintf(command, sizeof(command), "wget -O ./downloads/%s %s &> /dev/null", fnames[i], urls[i]);
 
-      lg("COMMAND: %s", command);
+      printf("COMMAND: %s", command);
 
       // Run the wget command
       int result = system(command);
 
       if (result == 0) {
-          lg("Download successful: %s", fnames[i]);
+          printf("Download successful: %s", fnames[i]);
           increments[i]++;
       } else {
-          lg("ERROR: Download failed: %s", urls[i]);
+          printf("ERROR: Download failed: %s", urls[i]);
       }
     }
   }
@@ -273,7 +273,7 @@ int main(void)
     // Open the original file for reading
     FILE *originalFile = fopen("urls.txt", "r");
     if (originalFile == NULL) {
-        lg("Error opening the original file");
+        printf("Error opening the original file");
         perror("Error opening the original file");
         return 1;
     }
@@ -281,7 +281,7 @@ int main(void)
     // Open a temporary file for writing
     FILE *tempFile = fopen("urls.temp", "w");
     if (tempFile == NULL) {
-        lg("Error creating the temporary file");
+        printf("Error creating the temporary file");
         perror("Error creating the temporary file");
         fclose(originalFile);
         return 1;
@@ -318,14 +318,14 @@ int main(void)
 
     // Delete the original file
     if (remove("urls.txt") != 0) {
-        lg("Error deleting the original file");
+        printf("Error deleting the original file");
         perror("Error deleting the original file");
         return 1;
     }
 
     // Rename the temporary file to the original file
     if (rename("urls.temp", "urls.txt") != 0) {
-        lg("Error renaming the temporary file");
+        printf("Error renaming the temporary file");
         perror("Error renaming the temporary file");
         return 1;
     }
@@ -336,7 +336,7 @@ int main(void)
   DIR *dir = opendir("./downloads");
 
   if (dir == NULL) {
-      lg("Unable to open directory");
+      printf("Unable to open directory");
       perror("Unable to open directory");
       return 1;
   }
@@ -351,7 +351,7 @@ int main(void)
       }
 
       // Run action on the file
-      lg("Manipulating %s", entry->d_name);
+      printf("Manipulating %s", entry->d_name);
 
       char long_name[MAX_LINE_LENGTH];
       strcpy(long_name, "./downloads/");
@@ -360,9 +360,9 @@ int main(void)
       int result = manipulate(long_name);
 
       if (result == 0) {
-          lg("%s manipulated successfully", entry->d_name);
+          printf("%s manipulated successfully", entry->d_name);
       } else {
-          lg("ERROR: manipulating %s", entry->d_name);
+          printf("ERROR: manipulating %s", entry->d_name);
       }
   }
 
@@ -376,12 +376,12 @@ int main(void)
   const char *srcDir = "./downloads";
   const char *destDir = DEST_DIR;
 
-  lg("Copying files to %s", destDir);
+  printf("Copying files to %s", destDir);
 
   // Open the source directory
   dir = opendir(srcDir);
   if (dir == NULL) {
-      lg("Failed to open source directory");
+      printf("Failed to open source directory");
       perror("Failed to open source directory");
       return 1;
   }
@@ -412,18 +412,18 @@ int main(void)
       char command[MAX_LINE_LENGTH]; // Adjust the buffer size as needed
       snprintf(command, sizeof(command), "sudo rndc reload");
 
-      lg("COMMAND: %s", command);
+      printf("COMMAND: %s", command);
 
       // Run the command
       int result = system(command);
 
       if (result == 0) {
-          lg("Command ran successfully");
+          printf("Command ran successfully");
       } else {
-          lg("ERROR: running command");
+          printf("ERROR: running command");
       }
 
-  lg("Script 2 has finished");
+  printf("Script 2 has finished");
 
   return 0;
 }
