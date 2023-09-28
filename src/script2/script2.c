@@ -390,7 +390,6 @@ int main(void)
       }
 
       // Run action on the file
-      lg("Manipulating %s", entry->d_name);
 
       char long_name[MAX_LINE_LENGTH];
       strcpy(long_name, "./downloads/");
@@ -399,9 +398,9 @@ int main(void)
       int result = manipulate(long_name);
 
       if (result == 0) {
-          lg("%s manipulated successfully", entry->d_name);
+          lg("File manipulated successfully");
       } else {
-          lg("ERROR: manipulating %s", entry->d_name);
+          lg("ERROR: manipulating file");
       }
   }
 
@@ -415,7 +414,7 @@ int main(void)
   const char *srcDir = "./downloads";
   const char *destDir = DEST_DIR;
 
-  lg("Copying files to %s", destDir);
+  lg("Copying files");
 
   // Open the source directory
   dir = opendir(srcDir);
