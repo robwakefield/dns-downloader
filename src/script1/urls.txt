@@ -1,7 +1,0 @@
-# Save URLs in format => Filename URL Increment(Optional)
-securedomains.piracy https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/anti.piracy.txt
-securedomains.gambling https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/gambling.txt
-securedomains.safesearch https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/nosafesearch.txt
-securedomains.bypass https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/doh-vpn-proxy-bypass.txt
-securedomains.fake https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/fake.txt
-securedomains.malicous https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/tif.txt
