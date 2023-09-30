@@ -8,3 +8,4 @@ src/script2/script2
 src/script1/manipulate1
 src/script2/manipulate2
 *log*.txt
+src/*/urls.txt
